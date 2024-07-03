@@ -29,5 +29,6 @@ const twoSum = function (nums, target) {
     //else add to map
     map.set(nums[i], i);
   }
+  //return empty array if no match found
   return [];
 };
