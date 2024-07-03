@@ -21,7 +21,6 @@ async function updateExcelSheet() {
       { header: "Question No.", key: "questionNo" },
       { header: "Problem Name", key: "problemName" },
       { header: "Problem Statement", key: "problemStatement" },
-      { header: "Solution", key: "solution" },
       { header: "Technique", key: "technique" },
       { header: "Topic", key: "topic" },
       { header: "Difficulty", key: "difficulty" },

@@ -17,11 +17,11 @@ const twoSum = function (nums, target) {
   //create a map
   const map = new Map();
 
-  //loop through nums array
+  //loop through the nums array
   for (let i = 0; i < nums.length; i++) {
     //find complement
     const complement = target - nums[i];
-    //check if complement exists in map
+    //check if complement already exists in map
     if (map.has(complement)) {
       //return indices if matched
       return [map.get(complement), i];
