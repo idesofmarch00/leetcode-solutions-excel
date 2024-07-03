@@ -21,7 +21,6 @@ async function updateExcelSheet() {
       { header: "Question No.", key: "questionNo" },
       { header: "Problem Name", key: "problemName" },
       { header: "Problem Statement", key: "problemStatement" },
-      { header: "Solution", key: "solution" },
       { header: "Technique", key: "technique" },
       { header: "Topic", key: "topic" },
       { header: "Difficulty", key: "difficulty" },
@@ -30,6 +29,7 @@ async function updateExcelSheet() {
 
   // Get list of changed files
   const status = await git.status();
+  console.log(status);
   const changedFiles = status.files.filter(
     (file) =>
       file.path.endsWith(".js") && !file.path.includes("update-excel.js")
@@ -38,6 +38,8 @@ async function updateExcelSheet() {
   for (const file of changedFiles) {
     const content = fs.readFileSync(file.path, "utf8");
     const metadata = extractMetadata(content);
+
+    console.log(metadata);
 
     if (metadata) {
       const existingRow = sheet.findRow(
@@ -49,6 +51,11 @@ async function updateExcelSheet() {
       } else {
         sheet.addRow(metadata);
       }
+
+      // Log the contents of the sheet to verify the row was added
+      sheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+        console.log(`Row ${rowNumber}:`, row.values);
+      });
     }
   }
 
