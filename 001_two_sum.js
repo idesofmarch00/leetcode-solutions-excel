@@ -14,7 +14,7 @@ difficulty: Easy
  * @return {number[]}
  */
 const twoSum = function (nums, target) {
-  //create map
+  //create a map
   const map = new Map();
 
   //loop through nums array
