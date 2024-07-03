@@ -57,9 +57,10 @@ async function updateExcelSheet() {
 }
 
 function extractMetadata(content) {
+  console.log(content);
   const metadataRegex = /\/\*\s*Metadata:([\s\S]*?)\*\//;
   const match = content.match(metadataRegex);
-
+  console.log(match);
   if (match) {
     const metadataString = match[1];
     const metadata = {};
