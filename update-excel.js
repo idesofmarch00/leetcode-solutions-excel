@@ -21,15 +21,21 @@ async function updateExcelSheet() {
       { header: "Question No.", key: "questionNo" },
       { header: "Problem Name", key: "problemName" },
       { header: "Problem Statement", key: "problemStatement" },
+      { header: "Solution", key: "solution" },
       { header: "Technique", key: "technique" },
       { header: "Topic", key: "topic" },
       { header: "Difficulty", key: "difficulty" },
     ];
   }
 
+  // Create a mapping of column keys to column indices
+  const columnKeyToIndex = {};
+  sheet.columns.forEach((col, index) => {
+    columnKeyToIndex[col.key] = index + 1; // ExcelJS columns are 1-based
+  });
+
   // Get list of changed files
   const status = await git.status();
-  console.log(status);
   const changedFiles = status.files.filter(
     (file) =>
       file.path.endsWith(".js") && !file.path.includes("update-excel.js")
@@ -42,14 +48,30 @@ async function updateExcelSheet() {
     console.log(metadata);
 
     if (metadata) {
-      const existingRow = sheet.findRow(
-        (row) => row.getCell("questionNo").value === metadata.questionNo
-      );
+
+      //todo:fix existing row logic
+      let existingRow;
+      sheet.eachRow((row, rowNumber) => {
+        if (
+          row.getCell(columnKeyToIndex["questionNo"]).value ===
+          metadata.questionNo
+        ) {
+          existingRow = row;
+          return false; // Stop iterating once we find the matching row
+        }
+      });
 
       if (existingRow) {
-        existingRow.values = metadata;
+        sheet.columns.forEach((column) => {
+          if (metadata[column.key] !== undefined) {
+            existingRow.getCell(column.key).value = metadata[column.key];
+          }
+        });
+        console.log("Updated existing row with metadata.");
       } else {
-        sheet.addRow(metadata);
+        const newRowData = Object.keys(metadata).map((key) => metadata[key]);
+        sheet.addRow(newRowData);
+        console.log("New row added with metadata.");
       }
 
       // Log the contents of the sheet to verify the row was added
@@ -64,10 +86,8 @@ async function updateExcelSheet() {
 }
 
 function extractMetadata(content) {
-  console.log(content);
   const metadataRegex = /\/\*\s*Metadata:([\s\S]*?)\*\//;
   const match = content.match(metadataRegex);
-  console.log(match);
   if (match) {
     const metadataString = match[1];
     const metadata = {};
