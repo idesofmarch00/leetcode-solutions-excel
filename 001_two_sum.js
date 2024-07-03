@@ -14,12 +14,19 @@ difficulty: Easy
  * @return {number[]}
  */
 const twoSum = function (nums, target) {
+  //create map
   const map = new Map();
+
+  //loop through nums array
   for (let i = 0; i < nums.length; i++) {
+    //find complement
     const complement = target - nums[i];
+    //check if complement exists in map
     if (map.has(complement)) {
+      //return indices if matched
       return [map.get(complement), i];
     }
+    //else add to map
     map.set(nums[i], i);
   }
   return [];

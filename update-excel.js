@@ -48,23 +48,28 @@ async function updateExcelSheet() {
     console.log(metadata);
 
     if (metadata) {
+      //todo:fix existing/target row logic (currently not working : always adding new row)
+      // Get the total number of rows in the sheet
+      const rowCount = sheet.rowCount;
 
-      //todo:fix existing row logic
-      let existingRow;
-      sheet.eachRow((row, rowNumber) => {
+      // Replace the existing row finding logic with this:
+      let targetRow;
+      for (let i = 1; i <= rowCount; i++) {
+        const row = sheet.getRow(i);
+        const rowValues = row.values;
         if (
-          row.getCell(columnKeyToIndex["questionNo"]).value ===
-          metadata.questionNo
+          rowValues &&
+          rowValues[columnKeyToIndex["questionNo"]] === metadata.questionNo
         ) {
-          existingRow = row;
-          return false; // Stop iterating once we find the matching row
+          targetRow = row;
+          break;
         }
-      });
+      }
 
-      if (existingRow) {
+      if (targetRow) {
         sheet.columns.forEach((column) => {
           if (metadata[column.key] !== undefined) {
-            existingRow.getCell(column.key).value = metadata[column.key];
+            targetRow.getCell(column.key).value = metadata[column.key];
           }
         });
         console.log("Updated existing row with metadata.");
